@@ -686,7 +686,8 @@ local function beginPress(key: string, input: InputObject)
 	if not data or not data.Slots[key] or press then
 		return
 	end
-	local shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) or UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
+	local shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
+		or UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
 	press = {
 		Key = key,
 		Input = input,

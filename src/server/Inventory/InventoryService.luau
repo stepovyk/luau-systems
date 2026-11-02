@@ -66,7 +66,8 @@ local function isSlotKey(value: any): boolean
 end
 
 local function isOptionalAmount(value: any): boolean
-	return value == nil or (type(value) == "number" and value == value and value % 1 == 0 and value >= 1 and value <= 1e6)
+	return value == nil
+		or (type(value) == "number" and value == value and value % 1 == 0 and value >= 1 and value <= 1e6)
 end
 
 type Handler = (player: Player, inventory: InventoryData, a: any, b: any, c: any) -> ActionResult

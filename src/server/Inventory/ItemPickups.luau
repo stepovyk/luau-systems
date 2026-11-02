@@ -113,10 +113,15 @@ local function watchSpawner(part: BasePart)
 			warn(`[ItemPickups] Spawner {part:GetFullName()} has no ItemId attribute`)
 			return
 		end
-		spawnPickup(part.Position, itemId, if type(count) == "number" then math.max(1, math.floor(count)) else 1, function()
-			local delaySeconds = part:GetAttribute("RespawnSeconds")
-			task.delay(if type(delaySeconds) == "number" then delaySeconds else 30, respawn)
-		end)
+		spawnPickup(
+			part.Position,
+			itemId,
+			if type(count) == "number" then math.max(1, math.floor(count)) else 1,
+			function()
+				local delaySeconds = part:GetAttribute("RespawnSeconds")
+				task.delay(if type(delaySeconds) == "number" then delaySeconds else 30, respawn)
+			end
+		)
 	end
 	respawn()
 end

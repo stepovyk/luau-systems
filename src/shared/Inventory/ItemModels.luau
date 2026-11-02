@@ -25,14 +25,24 @@ end
 
 local function sword(bladeColor: Color3, bladeMaterial: Enum.Material, guardColor: Color3): { PartSpec }
 	return {
-		{ Size = Vector3.new(0.5, 3, 0.12), CFrame = CFrame.new(0, 1.6, 0), Color = bladeColor, Material = bladeMaterial },
+		{
+			Size = Vector3.new(0.5, 3, 0.12),
+			CFrame = CFrame.new(0, 1.6, 0),
+			Color = bladeColor,
+			Material = bladeMaterial,
+		},
 		{
 			Size = Vector3.new(0.36, 0.36, 0.12),
 			CFrame = CFrame.new(0, 3.1, 0) * deg(0, 0, 45),
 			Color = bladeColor,
 			Material = bladeMaterial,
 		},
-		{ Size = Vector3.new(1.5, 0.22, 0.3), CFrame = CFrame.new(0, 0.05, 0), Color = guardColor, Material = Enum.Material.Metal },
+		{
+			Size = Vector3.new(1.5, 0.22, 0.3),
+			CFrame = CFrame.new(0, 0.05, 0),
+			Color = guardColor,
+			Material = Enum.Material.Metal,
+		},
 		{
 			Shape = Enum.PartType.Cylinder,
 			Size = Vector3.new(0.9, 0.24, 0.24),
@@ -84,12 +94,32 @@ local specs: { [string]: { PartSpec } } = {
 			Color = METAL,
 			Material = Enum.Material.Metal,
 		},
-		{ Size = Vector3.new(1.2, 0.16, 0.2), CFrame = CFrame.new(0, 0.1, -0.86), Color = DARK_METAL, Material = Enum.Material.Metal },
-		{ Size = Vector3.new(0.16, 0.9, 0.16), CFrame = CFrame.new(0, -0.3, -0.88), Color = DARK_METAL, Material = Enum.Material.Metal },
-		{ Size = Vector3.new(0.18, 0.5, 1.4), CFrame = CFrame.new(0, 1.55, 0.1), Color = Color3.fromRGB(176, 42, 52), Material = Enum.Material.Fabric },
+		{
+			Size = Vector3.new(1.2, 0.16, 0.2),
+			CFrame = CFrame.new(0, 0.1, -0.86),
+			Color = DARK_METAL,
+			Material = Enum.Material.Metal,
+		},
+		{
+			Size = Vector3.new(0.16, 0.9, 0.16),
+			CFrame = CFrame.new(0, -0.3, -0.88),
+			Color = DARK_METAL,
+			Material = Enum.Material.Metal,
+		},
+		{
+			Size = Vector3.new(0.18, 0.5, 1.4),
+			CFrame = CFrame.new(0, 1.55, 0.1),
+			Color = Color3.fromRGB(176, 42, 52),
+			Material = Enum.Material.Fabric,
+		},
 	},
 	Armor = {
-		{ Size = Vector3.new(2, 2.2, 1), CFrame = CFrame.new(0, 0, 0), Color = Color3.fromRGB(150, 158, 168), Material = Enum.Material.DiamondPlate },
+		{
+			Size = Vector3.new(2, 2.2, 1),
+			CFrame = CFrame.new(0, 0, 0),
+			Color = Color3.fromRGB(150, 158, 168),
+			Material = Enum.Material.DiamondPlate,
+		},
 		{
 			Shape = Enum.PartType.Ball,
 			Size = Vector3.new(1, 1, 1),
@@ -104,8 +134,18 @@ local specs: { [string]: { PartSpec } } = {
 			Color = METAL,
 			Material = Enum.Material.Metal,
 		},
-		{ Size = Vector3.new(2.06, 0.26, 1.06), CFrame = CFrame.new(0, -0.7, 0), Color = LEATHER, Material = Enum.Material.Leather },
-		{ Size = Vector3.new(0.4, 0.3, 0.1), CFrame = CFrame.new(0, -0.7, -0.55), Color = GOLD, Material = Enum.Material.Metal },
+		{
+			Size = Vector3.new(2.06, 0.26, 1.06),
+			CFrame = CFrame.new(0, -0.7, 0),
+			Color = LEATHER,
+			Material = Enum.Material.Leather,
+		},
+		{
+			Size = Vector3.new(0.4, 0.3, 0.1),
+			CFrame = CFrame.new(0, -0.7, -0.55),
+			Color = GOLD,
+			Material = Enum.Material.Metal,
+		},
 	},
 	Amulet = {
 		{
@@ -164,7 +204,12 @@ local specs: { [string]: { PartSpec } } = {
 		},
 	},
 	Ore = {
-		{ Size = Vector3.new(1.4, 1.1, 1.2), CFrame = deg(12, 20, 8), Color = Color3.fromRGB(96, 92, 90), Material = Enum.Material.Slate },
+		{
+			Size = Vector3.new(1.4, 1.1, 1.2),
+			CFrame = deg(12, 20, 8),
+			Color = Color3.fromRGB(96, 92, 90),
+			Material = Enum.Material.Slate,
+		},
 		{
 			Size = Vector3.new(0.9, 0.8, 0.9),
 			CFrame = CFrame.new(0.6, 0.45, 0.2) * deg(-18, 40, 25),
