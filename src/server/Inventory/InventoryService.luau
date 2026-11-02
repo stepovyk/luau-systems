@@ -25,8 +25,11 @@ local InventoryService = {}
 -- Fires with (player, inventory) after every change, for quests, UI hooks, analytics.
 InventoryService.Changed = Signal.new() :: Signal.Signal<Player, InventoryData>
 
-local getDef = ItemCatalog.Get :: InventoryCore.GetDef
-local equipSlots = ItemCatalog.EquipSlots :: { string }
+-- The catalog's literal-typed definitions viewed through the core's plain-string shape.
+local getDef: InventoryCore.GetDef = function(id)
+	return ItemCatalog.Get(id) :: any
+end
+local equipSlots: { string } = ItemCatalog.EquipSlots :: any
 local limiter = RateLimiter.new(12, 20)
 
 local remotes: Folder
@@ -111,7 +114,7 @@ local handlers: { [string]: Handler } = {
 			return "BadRequest"
 		end
 		local stack = inventory.Slots[slot]
-		local def = stack and getDef(stack.Id)
+		local def = stack and ItemCatalog.Get(stack.Id)
 		if not def or not def.Heal then
 			return "NotUsable"
 		end
@@ -151,7 +154,7 @@ local handlers: { [string]: Handler } = {
 	end,
 
 	Sort = function(_player, inventory)
-		InventoryCore.sort(inventory, getDef, ItemCatalog.CategoryOrder, ItemCatalog.RarityOrder)
+		InventoryCore.sort(inventory, getDef, ItemCatalog.CategoryOrder :: any, ItemCatalog.RarityOrder :: any)
 		return "Ok"
 	end,
 }

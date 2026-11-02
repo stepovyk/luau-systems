@@ -62,7 +62,7 @@ end
 
 function Signal:Fire(...)
 	-- Snapshot so handlers may disconnect themselves while we iterate.
-	for _, connection in table.clone(self._handlers) do
+	for _, connection: any in table.clone(self._handlers) do
 		if connection.Connected then
 			task.spawn(connection._handler, ...)
 		end

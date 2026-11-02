@@ -24,7 +24,7 @@ function RateLimiter.new(perSecond: number, burst: number, clock: (() -> number)
 end
 
 function RateLimiter:Allow(key: any): boolean
-	local now = self._clock()
+	local now: number = self._clock()
 	local bucket = self._buckets[key]
 	if not bucket then
 		bucket = { tokens = self._burst, updated = now }

@@ -6,10 +6,10 @@ local InventoryService = require(script.Parent.Inventory.InventoryService)
 local ItemPickups = require(script.Parent.Inventory.ItemPickups)
 
 -- What a brand-new player starts with.
-local STARTER_ITEMS = {
-	{ "iron_sword", 1 },
-	{ "leather_cap", 1 },
-	{ "health_potion", 3 },
+local STARTER_ITEMS: { { id: string, count: number } } = {
+	{ id = "iron_sword", count = 1 },
+	{ id = "leather_cap", count = 1 },
+	{ id = "health_potion", count = 3 },
 }
 
 local template: { [string]: any } = { StarterItemsGiven = false }
@@ -26,7 +26,7 @@ PlayerData.OnEachProfile(function(profile)
 	end
 	profile.Data.StarterItemsGiven = true
 	for _, entry in STARTER_ITEMS do
-		InventoryService.Give(profile.Player, entry[1], entry[2])
+		InventoryService.Give(profile.Player, entry.id, entry.count)
 	end
 end)
 

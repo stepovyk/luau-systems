@@ -776,14 +776,14 @@ end
 
 UserInputService.InputChanged:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-		if press and (input.UserInputType == Enum.UserInputType.MouseMovement or input == press.Input) then
+		if press and (input.UserInputType == Enum.UserInputType.MouseMovement or rawequal(input, press.Input)) then
 			updateDrag(rawPosition(input) + press.Offset)
 		end
 	end
 end)
 
 UserInputService.InputEnded:Connect(function(input)
-	if press and (input == press.Input or input.UserInputType == Enum.UserInputType.MouseButton1) then
+	if press and (rawequal(input, press.Input) or input.UserInputType == Enum.UserInputType.MouseButton1) then
 		endDrag(rawPosition(input) + press.Offset)
 	end
 end)
