@@ -216,7 +216,19 @@ local function headerButton(label: string, width: number, rightOffset: number): 
 	return button
 end
 
-local closeButton = headerButton("✕", 34, PADDING)
+local closeButton = headerButton("", 34, PADDING)
+-- Cross drawn from two bars, so it renders the same with any font.
+for _, angle in { 45, -45 } do
+	local bar = Instance.new("Frame")
+	bar.AnchorPoint = Vector2.new(0.5, 0.5)
+	bar.Position = UDim2.fromScale(0.5, 0.5)
+	bar.Size = UDim2.fromOffset(14, 2)
+	bar.Rotation = angle
+	bar.BorderSizePixel = 0
+	bar.BackgroundColor3 = THEME.Text
+	bar.Parent = closeButton
+	corner(bar, 1)
+end
 local sortButton = headerButton("Sort", 64, PADDING + 34 + 8)
 
 -- Equipment column
@@ -521,7 +533,7 @@ tooltipList.Parent = tooltip
 local function tooltipLine(order: number, props: { [string]: any }): TextLabel
 	local label = text(props)
 	label.LayoutOrder = order
-	label.Size = UDim2.new(1, 0, 0, 0)
+	label.Size = UDim2.fromScale(1, 0)
 	label.AutomaticSize = Enum.AutomaticSize.Y
 	label.TextWrapped = true
 	label.ZIndex = 51
@@ -610,9 +622,16 @@ type Press = {
 	Started: number,
 	Split: boolean,
 	Dragging: boolean,
+	-- Shift from InputObject.Position to this GUI's screen space (see beginPress).
+	Offset: Vector2,
 }
 local press: Press? = nil
 local lastClick: { Key: string, Time: number }? = nil
+
+local function inside(position: Vector2, gui: GuiObject): boolean
+	local p, s = gui.AbsolutePosition, gui.AbsoluteSize
+	return position.X >= p.X and position.X <= p.X + s.X and position.Y >= p.Y and position.Y <= p.Y + s.Y
+end
 
 local function slotAt(position: Vector2): string?
 	for key, view in slotViews do
@@ -625,13 +644,11 @@ local function slotAt(position: Vector2): string?
 end
 
 local function insideWindow(position: Vector2): boolean
-	local p, s = window.AbsolutePosition, window.AbsoluteSize
-	return position.X >= p.X and position.X <= p.X + s.X and position.Y >= p.Y and position.Y <= p.Y + s.Y
+	return inside(position, window)
 end
 
--- Input positions exclude the top bar; this GUI ignores the inset, so add it back.
-local function inputPosition(input: InputObject): Vector2
-	return Vector2.new(input.Position.X, input.Position.Y) + GuiService:GetGuiInset()
+local function rawPosition(input: InputObject): Vector2
+	return Vector2.new(input.Position.X, input.Position.Y)
 end
 
 local function splitAmount(count: number): number
@@ -688,10 +705,16 @@ local function beginPress(key: string, input: InputObject)
 	end
 	local shift = UserInputService:IsKeyDown(Enum.KeyCode.LeftShift)
 		or UserInputService:IsKeyDown(Enum.KeyCode.RightShift)
+	-- Whether input positions include the top bar inset differs between input types and
+	-- Roblox versions. This press started inside the slot, so whichever reading lands
+	-- inside it is the right one for the whole drag.
+	local raw = rawPosition(input)
+	local offset = if inside(raw, slotViews[key].Button) then Vector2.zero else GuiService:GetGuiInset()
 	press = {
 		Key = key,
 		Input = input,
-		Start = inputPosition(input),
+		Offset = offset,
+		Start = raw + offset,
 		Started = os.clock(),
 		Split = shift,
 		Dragging = false,
@@ -754,14 +777,14 @@ end
 UserInputService.InputChanged:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 		if press and (input.UserInputType == Enum.UserInputType.MouseMovement or input == press.Input) then
-			updateDrag(inputPosition(input))
+			updateDrag(rawPosition(input) + press.Offset)
 		end
 	end
 end)
 
 UserInputService.InputEnded:Connect(function(input)
 	if press and (input == press.Input or input.UserInputType == Enum.UserInputType.MouseButton1) then
-		endDrag(inputPosition(input))
+		endDrag(rawPosition(input) + press.Offset)
 	end
 end)
 

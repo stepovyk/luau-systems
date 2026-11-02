@@ -78,10 +78,10 @@ for index, entry in SPAWNS do
 	})
 	part({
 		Name = `Trim_{def.Id}`,
-		Size = Vector3.new(4.4, 0.3, 4.4),
-		CFrame = facing + Vector3.new(0, 2.45, 0),
+		Size = Vector3.new(4.2, 0.24, 4.2),
+		CFrame = facing + Vector3.new(0, 2.42, 0),
 		Color = ItemCatalog.RarityColors[def.Rarity],
-		Material = Enum.Material.Neon,
+		Material = Enum.Material.SmoothPlastic,
 	})
 
 	local spawner = part({

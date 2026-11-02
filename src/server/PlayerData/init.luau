@@ -46,7 +46,10 @@ export type Config = {
 
 local PlayerData = {}
 
-local store: DataStore? = nil
+-- The live DataStore, or a session-only table when Studio has no DataStore access.
+type Store = { UpdateAsync: (self: any, key: string, transform: (any) -> any) -> any }
+local store: Store? = nil
+local offline = false
 local config: Config? = nil
 local profiles: { [Player]: Profile } = {}
 local loading: { [Player]: boolean } = {}
@@ -83,6 +86,9 @@ local function currentVersion(): number
 end
 
 local function waitForBudget(requestType: Enum.DataStoreRequestType)
+	if offline then
+		return
+	end
 	local started = os.clock()
 	while DataStoreService:GetRequestBudgetForRequestType(requestType) < 1 do
 		if os.clock() - started > BUDGET_WAIT_LIMIT then
@@ -99,7 +105,7 @@ local function update(key: string, transform: (record: Record?) -> Record?): (bo
 	for attempt = 1, REQUEST_ATTEMPTS do
 		waitForBudget(Enum.DataStoreRequestType.UpdateAsync)
 		local ok, err = pcall(function()
-			(store :: DataStore):UpdateAsync(key, function(old)
+			(store :: Store):UpdateAsync(key, function(old)
 				return transform(old)
 			end)
 		end)
@@ -268,18 +274,50 @@ local function releasePlayer(player: Player)
 	releasing[player.UserId] = nil
 end
 
+-- In-memory stand-in with the same UpdateAsync contract, used only in Studio.
+local function memoryStore(): Store
+	local records: { [string]: any } = {}
+	return {
+		UpdateAsync = function(_self, key: string, transform: (any) -> any)
+			local result = transform(deepCopy(records[key]))
+			if result ~= nil then
+				records[key] = deepCopy(result)
+			end
+			return result
+		end,
+	}
+end
+
+local function openStore(name: string): Store
+	local ok, result = pcall(DataStoreService.GetDataStore, DataStoreService, name)
+	if ok and not RunService:IsStudio() then
+		return result :: any
+	end
+	if ok then
+		-- Studio: unpublished places and places without API access fail on the first request.
+		local probeOk, probeError = pcall(result.GetAsync, result, "__probe")
+		if probeOk then
+			return result :: any
+		end
+		result = probeError
+	end
+	if not RunService:IsStudio() then
+		error(`[PlayerData] DataStores unavailable: {result}`)
+	end
+	warn(
+		`[PlayerData] DataStores unavailable in Studio ({result}). Data lives only for this test session. `
+			.. `To test real saving, publish the place and enable "Studio Access to API Services" in Game Settings > Security.`
+	)
+	offline = true
+	return memoryStore()
+end
+
 -- Starts the service. Call once from a server script before players need their data.
 function PlayerData.Start(cfg: Config)
 	assert(config == nil, "PlayerData.Start called twice")
 	assert(RunService:IsServer(), "PlayerData runs on the server only")
 	config = cfg
-	local ok, result = pcall(DataStoreService.GetDataStore, DataStoreService, cfg.StoreName)
-	if not ok then
-		error(
-			`[PlayerData] DataStores unavailable ({result}). In Studio, enable "Studio Access to API Services" in Game Settings > Security.`
-		)
-	end
-	store = result
+	store = openStore(cfg.StoreName)
 
 	Players.PlayerAdded:Connect(loadPlayer)
 	Players.PlayerRemoving:Connect(releasePlayer)
