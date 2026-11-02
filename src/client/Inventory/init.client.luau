@@ -628,8 +628,8 @@ type Press = {
 local press: Press? = nil
 local lastClick: { Key: string, Time: number }? = nil
 
-local function inside(position: Vector2, gui: GuiObject): boolean
-	local p, s = gui.AbsolutePosition, gui.AbsoluteSize
+local function inside(position: Vector2, object: GuiObject): boolean
+	local p, s = object.AbsolutePosition, object.AbsoluteSize
 	return position.X >= p.X and position.X <= p.X + s.X and position.Y >= p.Y and position.Y <= p.Y + s.Y
 end
 
