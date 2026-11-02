@@ -1,0 +1,23 @@
+{
+  "name": "luau-systems",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Systems": {
+        "$path": "src/shared"
+      }
+    },
+    "ServerScriptService": {
+      "Systems": {
+        "$path": "src/server"
+      }
+    },
+    "StarterPlayer": {
+      "StarterPlayerScripts": {
+        "Systems": {
+          "$path": "src/client"
+        }
+      }
+    }
+  }
+}

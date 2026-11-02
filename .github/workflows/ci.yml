@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tools
+        run: |
+          mkdir -p "$HOME/bin"
+          fetch() {
+            gh release download -R "$1" --pattern "$2" -D /tmp/tools --clobber
+            unzip -oq "/tmp/tools/$(ls /tmp/tools | grep -E "$3" | head -1)" -d "$HOME/bin"
+            rm -rf /tmp/tools
+          }
+          fetch lune-org/lune '*linux-x86_64.zip' 'linux-x86_64'
+          fetch Kampfkarren/selene 'selene-*-linux.zip' 'linux'
+          fetch JohnnyMorganz/StyLua 'stylua-linux-x86_64.zip' 'linux'
+          fetch rojo-rbx/rojo 'rojo-*-linux-x86_64.zip' 'linux'
+          fetch JohnnyMorganz/luau-lsp 'luau-lsp-linux-x86_64.zip' 'linux'
+          curl -fsSL -o "$HOME/globalTypes.d.luau" https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/main/scripts/globalTypes.None.d.luau
+          chmod +x "$HOME/bin/"*
+          echo "$HOME/bin" >> "$GITHUB_PATH"
+
+      - name: Format
+        run: stylua --check src tests
+
+      - name: Lint
+        run: selene src
+
+      - name: Type check
+        run: |
+          rojo sourcemap -o sourcemap.json
+          luau-lsp analyze --definitions="$HOME/globalTypes.d.luau" --sourcemap=sourcemap.json src
+
+      - name: Tests
+        run: lune run tests/run
+
+      - name: Build place
+        run: rojo build -o showcase.rbxl
