@@ -219,7 +219,7 @@ for index, name in { "Passes", "Items" } :: { Tab } do
 	button.Text = name
 	button.ZIndex = 2
 	button.Parent = tabBar
-	tabButtons[name] = button
+	tabButtons[name :: Tab] = button
 end
 
 local scroller = Instance.new("ScrollingFrame")
@@ -425,7 +425,7 @@ end
 
 for name, button in tabButtons do
 	button.Activated:Connect(function()
-		showTab(name)
+		showTab(name :: any)
 	end)
 end
 

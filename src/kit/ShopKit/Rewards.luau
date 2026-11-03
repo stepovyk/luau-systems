@@ -41,7 +41,7 @@ end
 Rewards.Products = {
 	-- A tip grants nothing in game; it is counted so supporters can be thanked.
 	Tip = function(player: Player, amount: number): boolean
-		player:SetAttribute("Tipped", (player:GetAttribute("Tipped") or 0) + amount)
+		player:SetAttribute("Tipped", ((player:GetAttribute("Tipped") :: number?) or 0) + amount)
 		return true
 	end,
 } :: { [string]: (player: Player, amount: number) -> boolean }

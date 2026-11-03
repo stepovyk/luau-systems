@@ -173,6 +173,7 @@ local function rememberGrant(purchaseId: string, receipt: { [string]: any })
 			Spent = receipt.CurrencySpent,
 			Time = os.time(),
 		}, { receipt.PlayerId })
+		return true
 	end)
 	if not ok then
 		warn(`[ShopKit] Granted {purchaseId} but could not record it; this server still remembers it`)
