@@ -1,6 +1,6 @@
 # Luau Systems
 
-Production-ready Roblox systems in strictly typed Luau. Each one is server-authoritative, survives bad input from exploiters and ships with tests.
+Production-ready Roblox systems in strictly typed Luau: player data, inventory and a shop. Each one is server-authoritative, survives bad input from exploiters and ships with tests.
 
 **Try it live:** [Luau Systems Showcase](https://www.roblox.com/games/93824850830403)
 
@@ -37,6 +37,17 @@ InventoryService.Changed:Connect(function(player, inventory) end)
 
 World pickups: tag any part `ItemSpawner` and set the `ItemId`, `Count` and `RespawnSeconds` attributes.
 
+## Shop
+
+`src/kit/ShopKit` is a drop-in shop: put the folder into ServerScriptService, list your pass and developer product ids in `Config`, and say what each purchase gives in `Rewards`.
+
+- **Purchases are granted exactly once.** Every developer product receipt is checked against a DataStore before the reward and recorded after it, so retries, crashes and duplicate calls never grant twice, and a failed reward makes Roblox retry instead of taking the player's Robux for nothing.
+- **Passes** are checked on join with retries, applied right after purchase, and run your perk function on every spawn.
+- **Prices, names and icons come from Roblox**, so changing a price in Creator Hub updates the shop without code changes.
+- The window has Passes and Items tabs, badges, an owned state, a thank-you toast, and scales down to phone screens.
+
+In the showcase it sells a cosmetic Supporter tag and two tips.
+
 ## Project layout
 
 | Path | Goes to | Contents |
@@ -44,6 +55,7 @@ World pickups: tag any part `ItemSpawner` and set the `ItemId`, `Count` and `Res
 | `src/shared` | ReplicatedStorage.Systems | Pure inventory rules, item catalog, item models, utilities |
 | `src/server` | ServerScriptService.Systems | Player data, inventory service, pickups, showcase map |
 | `src/client` | StarterPlayerScripts.Systems | Inventory window |
+| `src/kit/ShopKit` | ServerScriptService.ShopKit | Drop-in shop (moves its client part to ReplicatedStorage at runtime) |
 
 `Showcase.server.luau` only builds the demo plaza; delete it in a real game.
 
