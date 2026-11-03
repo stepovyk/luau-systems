@@ -201,7 +201,7 @@ tabPadding.PaddingTop = UDim.new(0, 4)
 tabPadding.PaddingBottom = UDim.new(0, 4)
 tabPadding.Parent = tabBar
 local tabHighlight = Instance.new("Frame")
-tabHighlight.Size = UDim2.new(0.5, 0, 1, 0)
+tabHighlight.Size = UDim2.fromScale(0.5, 1)
 tabHighlight.BackgroundColor3 = THEME.SurfaceHover
 tabHighlight.Parent = tabBar
 corner(tabHighlight, 9)
@@ -211,7 +211,7 @@ local tabButtons: { [Tab]: TextButton } = {}
 for index, name in { "Passes", "Items" } :: { Tab } do
 	local button = Instance.new("TextButton")
 	button.BackgroundTransparency = 1
-	button.Size = UDim2.new(0.5, 0, 1, 0)
+	button.Size = UDim2.fromScale(0.5, 1)
 	button.Position = UDim2.fromScale((index - 1) * 0.5, 0)
 	button.FontFace = FONT_SEMI
 	button.TextSize = 16
